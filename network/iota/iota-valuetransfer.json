@@ -1,0 +1,29 @@
+{
+   "type": "iota",
+   "work":"valuetransfer",
+   "duration": 10,
+   "tx_rate": 0.2,
+   "sender_num": 2,
+   "node_url": [
+      "0.0.0.0:14001",
+      "0.0.0.0:14002"
+   ],
+   "query_ip": "0.0.0.0",
+   "query_port": "14001",
+   "query_times": 10,
+   "receiver": "ZCGADNWAWXODJMXCEMOLBFKVBYLZGWP9XPDFTRXGYXMULQRVMGYIMGBRKCFIVXQW9MNIWYOHMYLFDFDJZDPUCODZRW",
+   "coo_interval": 60,
+   "payload": {
+      "TimeStamp": "1538837575055",
+      "Tempreture": "20",
+      "Pressure": "40",
+      "Relative_humidity": "30%",
+      "Parent": "ZCGADNWAWXODJMXCEMOLBFKVBYLZGWP9XPDFTRXGYXMULQRVMGYIMGBRKCFIVXQW9MNIWYOHMYLFDFDJZDPUCODZRW",
+      "Location": {
+         "N": "39.9042",
+         "E": "116.4074"
+      },
+      "Illumination": "50",
+      "IP": "13.211.191.30"
+   }
+}

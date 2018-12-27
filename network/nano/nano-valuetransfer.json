@@ -1,0 +1,10 @@
+{
+   "type": "nano",
+   "work": "valuetransfer",
+   "duration": 2,
+   "tx_rate": 1,
+   "client_num": 2,
+   "node_num": 2,
+   "node_ip": [],
+   "key": "34F0A37AAD20F4A260F0A5B3CB3D7FB50673212263E58A380BC10474BB039CE4"
+}

@@ -1,0 +1,9 @@
+{
+   "type": "byteball",
+   "work": "valuetransfer",
+   "duration": 2,
+   "tx_rate": 1,
+   "client_num": 2,
+   "node_num": 2,
+   "node_ip": []
+}
