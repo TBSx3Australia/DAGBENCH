@@ -5,15 +5,30 @@ const childProcess = require('child_process');
 
 const WorkloadInterface = require('../workload-interface.js');
 const Util = require('../../util/util.js');
-
+const ClientArg = require('./clientArg.js');
 class ValueTransfer extends WorkloadInterface {
 
-   constructor(configPath, clientArgs) {
-      // TODO: 
-      super(configPath, clientArgs);
+   constructor(configPath, dag) {
+      super(configPath, dag);
       this.configPath = configPath;
-      this.clientArgs = clientArgs;
+      this.dag = dag;
       this.workType = 'valuetransfer';
+   }
+
+   async prepareClients() {
+      this.config = require(this.configPath);
+
+      const nodes = await this.dag.generateNodes();
+      const senders = await this.dag.generateSenders();
+      const senders_one = await this.dag.generateOne();
+      const receiver = await this.dag.generateReceiver();
+      const query = await this.dag.generateQuery();
+
+      const clientArg = new ClientArg(this.config, nodes, senders, senders_one, receiver, query);
+
+      this.clientArgs = clientArg.getClientArg();
+
+      return;
    }
 
    async preloadData() {
@@ -24,7 +39,7 @@ class ValueTransfer extends WorkloadInterface {
       return new Promise((resolve, reject) => {
          const client_num = this.clientArgs.sender_num + 2;
          const clientDir = path.join(__dirname, '.');
-         const configPath = path.join(clientDir, `/client.js`);
+         const clientPath = path.join(clientDir, `/client.js`);
 
          let balance = [];
          let transactions = [];
@@ -33,7 +48,7 @@ class ValueTransfer extends WorkloadInterface {
 
          let num = 0;
          for (let i = 0; i < client_num; i++) {
-            const client = childProcess.fork(configPath);
+            const client = childProcess.fork(clientPath);
 
             if (i === client_num - 1) client.send({ id: 'QUERY', arg: this.clientArgs, dagPath: this.configPath });
             else if (i === client_num - 2) client.send({ id: 'ONE', arg: this.clientArgs, dagPath: this.configPath });
@@ -47,7 +62,9 @@ class ValueTransfer extends WorkloadInterface {
                times += m.send_times || 0;
                if (num === Number(client_num)) {
                   Util.log(`### ${this.workType} success! ###`);
-                  resolve({ balance, transactions, latency, times});
+                  // resolve({ balance, transactions, latency, times});
+                  this.data = { balance, transactions, latency, times };
+                  resolve();
                }
             });
 
@@ -56,19 +73,22 @@ class ValueTransfer extends WorkloadInterface {
       })
    }
 
-   async generateReport(net, stats, clientArgs) {
-      // TODO: make stats a class
-      // let stats = {
-      //    transactions: data.transactions,
-      //    balance: data.balance,
-      //    latency: data.latency,
-      //    times: data.times,
-      //    query: data.query
-      // };
+   async calculate() {
+      const stats = {
+         transactions: await this.dag.calTransactions(this.data.transactions),
+         balance: await this.dag.calBalance(this.data.balance),
+         latency: await this.dag.calLatency(this.data.latency),
+         times: await this.dag.calTimes(this.data.times),
+      };
+      this.stats = stats;
+      return;
+   }
 
-      await this.generateThroughput(net,stats.transactions, stats.balance, stats.times, clientArgs.nodes.length, clientArgs.sender_num, clientArgs.duration);
+   async generateReport(net) {
 
-      await this.generateLatency(net, stats.latency, stats.times, clientArgs.nodes.length, clientArgs.sender_num, clientArgs.duration);
+      await this.generateThroughput(net,this.stats.transactions, this.stats.balance, this.stats.times, this.clientArgs.nodes.length, this.clientArgs.sender_num, this.clientArgs.duration);
+
+      await this.generateLatency(net, this.stats.latency, this.stats.times, this.clientArgs.nodes.length, this.clientArgs.sender_num, this.clientArgs.duration);
    }
 
    async generateThroughput(net, transactions, balance, times, nodes, senders, duration) {

@@ -11,7 +11,7 @@ const exec = util.promisify(require('child_process').exec);
 
 const DAGInterface = require('../DAG-Interface.js');
 const myUtil = require('../../util/util.js');
-const ClientArg = require('../clientArg.js');
+// const ClientArg = require('../../workload/valuetransfer/clientArg.js');
 
 class Iota extends DAGInterface { 
    /**
@@ -25,81 +25,115 @@ class Iota extends DAGInterface {
       this.dagType = 'iota';
    }
 
-   async init() {
-      const filePath = './network/iota/start-network.sh';
-      const cooPath = './network/iota/iota-coo.jar';
-      const num = Number(this.config.sender_num);
+   async init(env) {
+      if (env === 'local') {
+         const filePath = './network/iota/start-network.sh';
+         const cooPath = './network/iota/iota-coo.jar';
+         const num = Number(this.config.node_url.length);
 
-      await execFile(filePath, [`-n ${num}`]);
+         await execFile(filePath, [`-n ${num}`]);
 
-      myUtil.log('### Iota network start success ###');
-      // wait 1000ms for the docker fully start
-      await myUtil.sleep(1000);
+         myUtil.log('### Iota network start success ###');
+         // wait 1000ms for the docker fully start
+         await myUtil.sleep(2000);
 
-      await exec(`java -jar ${cooPath} Coordinator ${this.config.query_ip} ${this.config.query_port}`);
-      myUtil.log('### Iota run Coordinator success ###');
-      // wait 10000ms for fully generate the first milestone
-      await myUtil.sleep(10000);
+         await exec(`java -jar ${cooPath} Coordinator ${this.config.query_ip} ${this.config.query_port}`);
+         myUtil.log('### Iota run Coordinator success ###');
+         // wait 10000ms for fully generate the first milestone
+         await myUtil.sleep(10000);
 
-      myUtil.log(`### Iota running Coordinator periodically every ${this.config.coo_interval}s ###`);
-      // TODO: auto terminate this exec
-      exec(`java -jar ${cooPath} PeriodicCoordinator -host ${this.config.query_ip} -port ${this.config.query_port} -interval ${this.config.coo_interval}`);
-
-      return;
-   }
-
-   async prepareClients() {
-
-      // may differ
-      const nodes = await this.generateNodes();
-      const senders = await this.generateSenders();
-      const senders_one = await this.generateOne();
-      const receiver = this.config.receiver;
-      const query = await this.generateQuery();
-
-      const clientArg = new ClientArg(this.config, nodes, senders, senders_one, receiver, query);
+         if (this.config.coo_interval) {
+            myUtil.log(`### Iota running Coordinator periodically every ${this.config.coo_interval}s ###`);
+            // TODO: auto terminate this exec
+            exec(`java -jar ${cooPath} PeriodicCoordinator -host ${this.config.query_ip} -port ${this.config.query_port} -interval ${this.config.coo_interval}`);
+         }
+         
+         return;
+      } else { 
+         // implement other env
+         return;
+      }
       
-      return clientArg.getClientArg();
    }
+
+   // async prepareClients(work) {
+
+   //    // may differ
+   //    const nodes = await this.generateNodes();
+   //    const senders = await this.generateSenders();
+   //    const senders_one = await this.generateOne();
+   //    const receiver = this.config.receiver;
+   //    const query = await this.generateQuery();
+
+   //    const clientArg = new ClientArg(this.config, nodes, senders, senders_one, receiver, query);
+
+   //    return clientArg.getClientArg();
+   // }
 
    async send(node, sender, receiver) {
       const iota = core.composeAPI({ provider: node });
       iota.sendTrytes(sender, 3, 9)
-         .catch(err => {
-            myUtil.error(`Iota send err: ${err}`);
+         .catch(error => {
+            myUtil.error(`Iota send error: ${error}`);
          });
    }
 
-   async sendAndWait(node, sender, receiver) {
-      const iota = core.composeAPI({ provider: node });
-      const sendTime = { "sendTimestamp": new Date().getTime() }
-      const transfers = [{
-         address: receiver,
-         value: 1,
-         message: conventer.asciiToTrytes(JSON.stringify(sendTime))
-      }]
-      
+   async sendAsync(node, sender, receiver) { 
       try {
+         const iota = core.composeAPI({ provider: node });
+         await iota.sendTrytes(sender, 3, 9);
+      } catch (error) {
+         myUtil.error(`Iota sendAsync error: ${error}`);
+      }
+   }
+
+   async sendAndWait(node, sender, account) {
+      try {
+         const iota = core.composeAPI({ provider: node });
+         const sendTime = { "sendTimestamp": new Date().getTime() }
+         const transfers = [{
+            address: account,
+            value: 1,
+            message: conventer.asciiToTrytes(JSON.stringify(sendTime))
+         }]
+
          const trytes = await iota.prepareTransfers(sender, transfers);
          const bundle = await iota.sendTrytes(trytes, 3, 9);
          const msg = JSON.parse(extract.extractJson(bundle));
          const lag = bundle[0].attachmentTimestamp - msg.sendTimestamp;
 
          return lag / 1000;
-      } catch (err) {
-         myUtil.error(`Iota sendAndWait err: ${err}`);
+      } catch (error) {
+         myUtil.error(`Iota sendAndWait error: ${error}`);
          return null;
       }
    }
 
-   async getBalance(query_url, receiver) {
+   async getBalance(query_url, account) {
       try {
          const iota = core.composeAPI({ provider: query_url });
-         const bal = await iota.getBalances([receiver], 100);
+         const bal = await iota.getBalances([account], 100);
          return bal.balances[0];
       } catch (error) {
-         myUtil.error(`Iota getBalance err: ${err}`);
+         myUtil.error(`Iota getBalance error: ${error}`);
          return null;
+      }
+   }
+
+   async getHistory(query_url, account) {
+      let send = 0;
+      let receive = 0;
+      try {
+         const iota = core.composeAPI({ provider: query_url });
+         const data = await iota.getAccountData(account);
+         data.transfers.map((tran) => {
+            if (tran.length === 3) receive++;
+            else send++;
+         });
+         return;
+      } catch (error) {
+         myUtil.error(`Iota getHistory error: ${error}`);
+         return;
       }
    }
 
@@ -109,44 +143,10 @@ class Iota extends DAGInterface {
          const tx = await iota.findTransactions({ addresses: [receiver] });
          return tx;
       } catch (error) {
-         myUtil.error(`Iota getTransaction err: ${err}`);
+         myUtil.error(`Iota getTransaction error: ${error}`);
          return null;
       }
    }
-
-   async calculate(data) {
-      // TODO: what if add workload? how to add stats
-      let stats = {
-         transactions: data.transactions,
-         balance: data.balance,
-         latency: data.latency,
-         times: data.times,
-         query: data.query
-      };
-      // switch (message) {
-      //    case 'Latency':
-      //       result = await this.calculateLatency(data);
-      //    case 'Query':
-      //       result = await this.calculateQuery(data);
-      //    default:
-      //       console.log('Calculate message is not found!');
-      //       result = data
-      // }
-      return stats;
-   }
-
-   async finalise() {
-      await exec('docker stop $(docker ps -a -q)');
-      await exec('docker rm $(docker ps -a -q)');
-      // await exec(`rm -rf ../network/${this.dagType}/config_*`);
-
-      myUtil.log('### Iota finalise success ###');
-      return;
-   }
-
-   async calculateLatency() { }
-
-   async calculateQuery() { }
 
    generateNodes() {
       const nodes = [];
@@ -174,7 +174,6 @@ class Iota extends DAGInterface {
       const seedsArr = seedsText.split("\n");
 
       const wstream = fs.createWriteStream(`./network/iota/data/tryte.txt`);
-
       const trytes = [];
       for (let i = 0; i < seedsArr.length; i++) {
          const tryte = await iota.prepareTransfers(seedsArr[i], transfers);
@@ -203,10 +202,39 @@ class Iota extends DAGInterface {
       return senders_one;
    }
 
+   generateReceiver() {
+      return this.config.receiver;
+   }
+
    generateQuery() {
       const query_url = `http://${this.config.query_ip}:${this.config.query_port}`;
       const query_times = Number(this.config.query_times);
       return { query_url, query_times};
+   }
+
+   async calTransactions(data) {
+      return data;
+   }
+
+   async calBalance(data) {
+      return data;
+   }
+
+   async calLatency(data) {
+      return data;
+   }
+
+   async calTimes(data) {
+      return data;
+   }
+
+   async finalise() {
+      await exec('docker stop $(docker ps -a -q)');
+      await exec('docker rm $(docker ps -a -q)');
+      // await exec(`rm -rf ../network/${this.dagType}/config_*`);
+
+      myUtil.log('### Iota finalise success ###');
+      return;
    }
 }
 

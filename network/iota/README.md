@@ -20,13 +20,19 @@ When building local environment for IOTA, we use docker image to build the testn
    docker pull iotaledger/iri:version
    ```
 
-2. build snapshot file for your test net
+2. generate seeds and Snapshot file for your test net
 
    ```
    java -jar iota-coo.jar SnapshotBuilder
    ```
 
    iota-coo.jar is built based on [private iota testnet](https://github.com/schierlm/private-iota-testnet)
+
+   Seeds are output to `seeds.txt`
+
+   Snapshot file is `Snapshot.txt`
+
+   The relation of seeds and their addresses are in `Snapshot.log`
 
    The snapshot.txt should look like this:
    ```

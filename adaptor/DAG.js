@@ -37,34 +37,74 @@ class DAG {
       }
    }
 
-   async init() {
+   async init(env) {
       Util.log(`### ${this.dagType} init ###`);
-      await this.dagObj.init();
+      await this.dagObj.init(env);
    }
 
-   async prepareClients() {
-      Util.log(`### ${this.dagType} prepareClients ###`);
-      return await this.dagObj.prepareClients();
-   }
+   // async prepareClients(work) {
+   //    Util.log(`### ${this.dagType} prepareClients for ${work} ###`);
+   //    return await this.dagObj.prepareClients(work);
+   // }
 
    async send(nodes_address, sender_account, receiver_account) {
       await this.dagObj.send(nodes_address, sender_account, receiver_account);
+   }
+
+   async sendAsync(nodes_address, sender_account, receiver_account) {
+      await this.dagObj.sendAsync(nodes_address, sender_account, receiver_account);
    }
 
    async sendAndWait(nodes_address, sender_account, receiver_account) {
       return await this.dagObj.sendAndWait(nodes_address, sender_account, receiver_account);
    }
 
-   async getBalance(query_url, receiver) {
-      return await this.dagObj.getBalance(query_url, receiver);
+   async getBalance(query_url, account) {
+      return await this.dagObj.getBalance(query_url, account);
    }
 
-   async getTransaction(query_url, receiver) {
-      return await this.dagObj.getTransaction(query_url, receiver);
+   async getTransaction(query_url, account) {
+      return await this.dagObj.getTransaction(query_url, account);
    }
 
-   async calculate(data) {
-      return await this.dagObj.calculate(data);
+   async getHistory(query_url, account) {
+      return await this.dagObj.getHistory(query_url, account);
+   }
+
+   async generateNodes() {
+      return await this.dagObj.generateNodes();
+   }
+
+   async generateSenders() {
+      return await this.dagObj.generateSenders();
+   }
+
+   async generateOne() {
+      return await this.dagObj.generateOne();
+   }
+
+   async generateReceiver() {
+      return await this.dagObj.generateReceiver();
+   }
+
+   async generateQuery() {
+      return await this.dagObj.generateQuery();
+   }
+
+   async calTransactions(data) {
+      return await this.dagObj.calTransactions(data);
+   }
+
+   async calBalance(data) {
+      return await this.dagObj.calBalance(data);
+   }
+
+   async calLatency(data) {
+      return await this.dagObj.calLatency(data);
+   }
+
+   async calTimes(data) {
+      return await this.dagObj.calTimes(data);
    }
 
    async finalise() {

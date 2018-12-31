@@ -7,19 +7,19 @@ class Workload {
     * Constructor
     * @param {String} configPath path of the blockchain configuration file
     */
-   constructor(configPath, clientArgs) {
+   constructor(configPath, dag) {
       const config = require(configPath);
 
       if (config.work) {
          if (config.work === 'valuetransfer') {
             const Valuetransfer = require('./valuetransfer/valuetransfer.js');
             this.workType = 'valuetransfer';
-            this.workObj = new Valuetransfer(configPath, clientArgs);
+            this.workObj = new Valuetransfer(configPath, dag);
          }
          else if (config.work === 'query') {
             const Query = require('./query/query.js');
             this.workType = 'query';
-            this.workObj = new Query(configPath, clientArgs);
+            this.workObj = new Query(configPath, dag);
          }
          else {
             this.workType = 'unknown';
@@ -32,9 +32,14 @@ class Workload {
       }
    }
 
+   async prepareClients() {
+      Util.log(`### ${this.workType} prepareClients ###`);
+      await this.workObj.prepareClients();
+   }
+
    async preloadData() {
       Util.log(`### ${this.workType} preload data ###`);
-      this.workObj.preloadData();
+      await this.workObj.preloadData();
    }
 
    async createClients() {
@@ -42,9 +47,14 @@ class Workload {
       return this.workObj.createClients();
    }
 
-   async generateReport(net, stats, clientArgs) {
+   async calculate() {
+      Util.log(`### ${this.workType} calculate ###`);
+      return this.workObj.calculate();
+   }
+
+   async generateReport(net) {
       Util.log(`### ${this.workType} generateReport ###`);
-      return this.workObj.generateReport(net, stats, clientArgs);
+      return this.workObj.generateReport(net);
    }
 
 }

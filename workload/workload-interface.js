@@ -6,8 +6,13 @@ class WorkloadInterface {
     * Constructor
     * @param {String} configPath path of the blockchain configuration file
     */
-   constructor(configPath) {
+   constructor(configPath,dag) {
       this.configPath = configPath;
+      this.dag = dag;
+   }
+
+   async prepareClients() {
+      throw new Error('prepareClients is not implemented');
    }
 
    async preloadData() { 
@@ -16,6 +21,10 @@ class WorkloadInterface {
 
    async createClients() {
       throw new Error('createClients is not implemented');
+   }
+
+   async calculate() { 
+      throw new Error('calculate is not implemented');
    }
 
    async generateReport() {
