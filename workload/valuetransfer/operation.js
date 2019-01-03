@@ -21,7 +21,7 @@ class Operation {
                resolve({ order, send_times, message: 'GROUP' });
             }
             else {
-               this.dagObj.send(node, senders[send_times], this.clientArgs.receiver);
+               this.dagObj.send(node, senders, send_times, this.clientArgs.receiver);
                send_times++
             }
          }, 1 / this.clientArgs.tx_rate * 1000);
@@ -36,11 +36,12 @@ class Operation {
       const duration = this.clientArgs.duration;
       const sendTill = Util.getTime(duration * 1000);
 
-      await Util.sleep(duration * 1000 * 0.1);
       // TODO: set timeout error
       while (sendTill > new Date()) {
+         await Util.sleep(duration * 1000 * 0.1);
+
          const node = nodes[send_times % nodes.length];
-         const lag = await this.dagObj.sendAndWait(node, senders_one[send_times], this.clientArgs.receiver);
+         const lag = await this.dagObj.sendAndWait(node, senders_one, send_times, this.clientArgs.receiver);
          if (lag) latency.push(lag);
          send_times++;
       }
@@ -76,7 +77,7 @@ class Operation {
 
                this.dagObj.getTransaction(query_url, receiver)
                   .then((tx) => {
-                     if (tx) transactions.push(tx.length);
+                     if (tx) transactions.push(tx);
                   })
             }
          }, query_lag);

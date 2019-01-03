@@ -20,13 +20,16 @@ class ValueTransfer extends WorkloadInterface {
 
       const nodes = await this.dag.generateNodes();
       const senders = await this.dag.generateSenders();
+      const sender_group = await this.dag.generateSenderGroup(senders);
       const senders_one = await this.dag.generateOne();
       const receiver = await this.dag.generateReceiver();
       const query = await this.dag.generateQuery();
+      
 
-      const clientArg = new ClientArg(this.config, nodes, senders, senders_one, receiver, query);
+      const clientArg = new ClientArg(this.config, nodes, sender_group, senders_one, receiver, query);
 
       this.clientArgs = clientArg.getClientArg();
+      console.log('client', this.clientArgs.senders_one, this.clientArgs.senders);
 
       return;
    }
@@ -55,14 +58,12 @@ class ValueTransfer extends WorkloadInterface {
             else client.send({ order: i, id: 'GROUP', arg: this.clientArgs, dagPath: this.configPath });
 
             client.on('message', (m) => {
-               console.log('parent got message:', m, num++);
                balance = m.balance || balance;
                transactions = m.transactions || transactions;
                latency = m.latency || latency;
                times += m.send_times || 0;
                if (num === Number(client_num)) {
                   Util.log(`### ${this.workType} success! ###`);
-                  // resolve({ balance, transactions, latency, times});
                   this.data = { balance, transactions, latency, times };
                   resolve();
                }

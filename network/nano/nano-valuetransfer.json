@@ -1,10 +1,15 @@
 {
    "type": "nano",
    "work": "valuetransfer",
-   "duration": 2,
-   "tx_rate": 1,
-   "client_num": 2,
-   "node_num": 2,
-   "node_ip": [],
+   "duration": 10,
+   "tx_rate": 0.2,
+   "sender_num": 2,
+   "node_url": [
+      {"rpc": "127.0.0.1:7010", "peer": "172.17.0.2"},
+      {"rpc": "127.0.0.1:7011", "peer": "172.17.0.3"}
+   ],
+   "query_ip": "127.0.0.1",
+   "query_port": "7010",
+   "query_times": 10,
    "key": "34F0A37AAD20F4A260F0A5B3CB3D7FB50673212263E58A380BC10474BB039CE4"
 }

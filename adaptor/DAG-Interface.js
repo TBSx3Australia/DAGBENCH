@@ -51,6 +51,10 @@ class DAGInterface {
       throw new Error('generateSenders is not implemented');
    }
 
+   async generateSenderGroup() { 
+      throw new Error('generateSenderGroup is not implemented');
+   }
+
    async generateOne() {
       throw new Error('generateOne is not implemented');
    }
@@ -61,6 +65,10 @@ class DAGInterface {
 
    async generateQuery() {
       throw new Error('generateQuery is not implemented');
+   }
+
+   async generateOutput() {
+      throw new Error('generateOutput is not implemented');
    }
 
    async calTransactions() {

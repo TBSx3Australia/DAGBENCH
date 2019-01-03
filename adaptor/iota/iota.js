@@ -11,7 +11,6 @@ const exec = util.promisify(require('child_process').exec);
 
 const DAGInterface = require('../DAG-Interface.js');
 const myUtil = require('../../util/util.js');
-// const ClientArg = require('../../workload/valuetransfer/clientArg.js');
 
 class Iota extends DAGInterface { 
    /**
@@ -34,8 +33,8 @@ class Iota extends DAGInterface {
          await execFile(filePath, [`-n ${num}`]);
 
          myUtil.log('### Iota network start success ###');
-         // wait 1000ms for the docker fully start
-         await myUtil.sleep(2000);
+         // wait 4000ms for the docker fully start
+         await myUtil.sleep(4000);
 
          await exec(`java -jar ${cooPath} Coordinator ${this.config.query_ip} ${this.config.query_port}`);
          myUtil.log('### Iota run Coordinator success ###');
@@ -70,34 +69,42 @@ class Iota extends DAGInterface {
    //    return clientArg.getClientArg();
    // }
 
-   async send(node, sender, receiver) {
+   async send(node, sender, send_times, receiver) {
+      let send = sender;
+      if (send_times === 0 || send_times) {
+         send = sender[send_times];
+      }
       const iota = core.composeAPI({ provider: node });
-      iota.sendTrytes(sender, 3, 9)
+      iota.sendTrytes(send, 3, 9)
          .catch(error => {
             myUtil.error(`Iota send error: ${error}`);
          });
    }
 
-   async sendAsync(node, sender, receiver) { 
+   async sendAsync(node, sender, order, receiver) {
       try {
          const iota = core.composeAPI({ provider: node });
-         await iota.sendTrytes(sender, 3, 9);
+         await iota.sendTrytes(sender[order], 3, 9);
       } catch (error) {
          myUtil.error(`Iota sendAsync error: ${error}`);
       }
    }
 
-   async sendAndWait(node, sender, account) {
+   async sendAndWait(node, sender, send_times, receiver) {
+      let send = sender;
+      if (send_times === 0 || send_times) {
+         send = sender[send_times];
+      }
       try {
          const iota = core.composeAPI({ provider: node });
          const sendTime = { "sendTimestamp": new Date().getTime() }
          const transfers = [{
-            address: account,
+            address: receiver.address,
             value: 1,
             message: conventer.asciiToTrytes(JSON.stringify(sendTime))
          }]
 
-         const trytes = await iota.prepareTransfers(sender, transfers);
+         const trytes = await iota.prepareTransfers(send, transfers);
          const bundle = await iota.sendTrytes(trytes, 3, 9);
          const msg = JSON.parse(extract.extractJson(bundle));
          const lag = bundle[0].attachmentTimestamp - msg.sendTimestamp;
@@ -109,10 +116,10 @@ class Iota extends DAGInterface {
       }
    }
 
-   async getBalance(query_url, account) {
+   async getBalance(query_url, receiver) {
       try {
          const iota = core.composeAPI({ provider: query_url });
-         const bal = await iota.getBalances([account], 100);
+         const bal = await iota.getBalances([receiver.address], 100);
          return bal.balances[0];
       } catch (error) {
          myUtil.error(`Iota getBalance error: ${error}`);
@@ -120,12 +127,12 @@ class Iota extends DAGInterface {
       }
    }
 
-   async getHistory(query_url, account) {
+   async getHistory(query_url, receiver) {
       let send = 0;
       let receive = 0;
       try {
          const iota = core.composeAPI({ provider: query_url });
-         const data = await iota.getAccountData(account);
+         const data = await iota.getAccountData(receiver.seed);
          data.transfers.map((tran) => {
             if (tran.length === 3) receive++;
             else send++;
@@ -140,8 +147,8 @@ class Iota extends DAGInterface {
    async getTransaction(query_url, receiver) {
       try {
          const iota = core.composeAPI({ provider: query_url });
-         const tx = await iota.findTransactions({ addresses: [receiver] });
-         return tx;
+         const tx = await iota.findTransactions({ addresses: [receiver.address] });
+         return tx.length;
       } catch (error) {
          myUtil.error(`Iota getTransaction error: ${error}`);
          return null;
@@ -174,25 +181,28 @@ class Iota extends DAGInterface {
       const seedsArr = seedsText.split("\n");
 
       const wstream = fs.createWriteStream(`./network/iota/data/tryte.txt`);
-      const trytes = [];
+      // const trytes = [];
       for (let i = 0; i < seedsArr.length; i++) {
          const tryte = await iota.prepareTransfers(seedsArr[i], transfers);
-         trytes.push(tryte);
+         senders.push(tryte);
          wstream.write(tryte + "\n");
       }
       wstream.end();
       myUtil.log('### iota write trytes finish ###');
 
-      // generate senders array
-      const shardNum = parseInt(trytes.length / this.config.sender_num);
-      for (let i = 0; i < this.config.sender_num; i++) {
-         if (i === this.config.sender_num - 1) senders.push(trytes);
-         else senders.push(trytes.splice(0, shardNum));
-      }
-
       myUtil.log('### iota generate senders finish ###');
 
       return senders;
+   }
+
+   async generateSenderGroup(senders) {
+      const sender_group = [];
+      const shardNum = parseInt(senders.length / this.config.sender_num);
+      for (let i = 0; i < this.config.sender_num; i++) {
+         if (i === this.config.sender_num - 1) sender_group.push(senders);
+         else sender_group.push(senders.splice(0, shardNum));
+      }
+      return sender_group;
    }
 
    generateOne() {
@@ -203,7 +213,11 @@ class Iota extends DAGInterface {
    }
 
    generateReceiver() {
-      return this.config.receiver;
+      const receiver = {
+         seed: this.config.seed,
+         address: this.config.receiver
+      }
+      return receiver;
    }
 
    generateQuery() {

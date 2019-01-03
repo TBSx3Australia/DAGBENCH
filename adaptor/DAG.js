@@ -47,16 +47,23 @@ class DAG {
    //    return await this.dagObj.prepareClients(work);
    // }
 
-   async send(nodes_address, sender_account, receiver_account) {
-      await this.dagObj.send(nodes_address, sender_account, receiver_account);
+   async send(nodes_address, sender_account, send_times, receiver_account) {
+      await this.dagObj.send(nodes_address, sender_account, send_times, receiver_account);
    }
 
-   async sendAsync(nodes_address, sender_account, receiver_account) {
-      await this.dagObj.sendAsync(nodes_address, sender_account, receiver_account);
+   /**
+    * Write a csv file
+    * @param {string} node 
+    * @param {array} senders each element is a sender object
+    * @param {number} order position of sender
+    * @param {object} receiver object
+    */
+   async sendAsync(node, senders, order, receiver) {
+      await this.dagObj.sendAsync(node, senders, order, receiver);
    }
 
-   async sendAndWait(nodes_address, sender_account, receiver_account) {
-      return await this.dagObj.sendAndWait(nodes_address, sender_account, receiver_account);
+   async sendAndWait(nodes_address, sender_account, send_times, receiver_account) {
+      return await this.dagObj.sendAndWait(nodes_address, sender_account, send_times, receiver_account);
    }
 
    async getBalance(query_url, account) {
@@ -75,6 +82,10 @@ class DAG {
       return await this.dagObj.generateNodes();
    }
 
+   async generateSenderGroup(senders) {
+      return await this.dagObj.generateSenderGroup(senders);
+   }
+
    async generateSenders() {
       return await this.dagObj.generateSenders();
    }
@@ -89,6 +100,10 @@ class DAG {
 
    async generateQuery() {
       return await this.dagObj.generateQuery();
+   }
+
+   async generateOutput() {
+      return await this.dagObj.generateOutput();
    }
 
    async calTransactions(data) {

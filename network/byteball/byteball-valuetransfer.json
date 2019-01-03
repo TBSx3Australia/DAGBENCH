@@ -1,9 +1,11 @@
 {
    "type": "byteball",
    "work": "valuetransfer",
-   "duration": 2,
-   "tx_rate": 1,
-   "client_num": 2,
-   "node_num": 2,
-   "node_ip": []
+   "duration": 10,
+   "tx_rate": 0.5,
+   "sender_num": 1,
+   "node_url": ["127.0.0.1:6611"],
+   "query_ip": "127.0.0.1",
+   "query_port": "6611",
+   "query_times": 10
 }
