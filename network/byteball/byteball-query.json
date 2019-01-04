@@ -1,0 +1,11 @@
+{
+   "type": "byteball",
+   "work": "query",
+   "block_length": 5,
+   "node_url": [
+      "127.0.0.1:6611"
+   ],
+   "sender_num": 1,
+   "query_ip": "127.0.0.1",
+   "query_port": "6611"
+}

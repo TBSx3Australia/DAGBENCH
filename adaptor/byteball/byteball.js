@@ -24,12 +24,6 @@ class Byteball extends DAGInterface {
       console.log('Byteball init');
    }
 
-   // async prepareClients() {
-   //    const config = require(this.configPath);
-   //    const clients = this.getClients(config);
-   //    return clients;
-   // }
-
    async send(node, sender, send_times, receiver) {
       const client = new byteball.Client(node);
       const params = {
@@ -42,17 +36,29 @@ class Byteball extends DAGInterface {
       };
       const wif = sender[send_times].wif
       client.post.payment(params, wif, (err, result) => {
-         if (err) myUtil.error('Byteball send error', err);
+         if (err) myUtil.error(`${this.dagType} send error: ${err}`);
       });
    }
 
    async sendAsync(node, sender, order, receiver) {
-      // try {
-      //    const iota = core.composeAPI({ provider: node });
-      //    await iota.sendTrytes(sender[order], 3, 9);
-      // } catch (error) {
-      //    myUtil.error(`Iota sendAsync error: ${error}`);
-      // }
+      try {
+         const client = new byteball.Client(node);
+         const params = {
+            outputs: [
+               {
+                  address: receiver.address,
+                  amount: 1
+               }
+            ]
+         };
+         const wif = sender[order].wif;
+         const postPaymentAsync = util.promisify(client.post.payment);
+         await postPaymentAsync(params, wif);
+         return;
+      } catch (error) {
+         myUtil.error(`${this.dagType} sendAsync error: ${error}`);
+         return;
+      }
    }
 
    async sendAndWait(node, sender, send_times, receiver) {
@@ -61,11 +67,11 @@ class Byteball extends DAGInterface {
          const params = {
             time: new Date().getTime()
          };
-         const postDatasAsync = util.promisify(client.post.data);
-         const unit = await postDatasAsync(params, sender[send_times].wif);
+         const postDataAsync = util.promisify(client.post.data);
+         const unit = await postDataAsync(params, sender[send_times].wif);
          return unit;
       } catch (error) {
-         myUtil.error('Byteball sendAndWait error', error);
+         myUtil.error(`${this.dagType} sendAndWait error: ${error}`);
          return null;
       }
    }
@@ -77,7 +83,7 @@ class Byteball extends DAGInterface {
          const result = await getBalancesAsync([receiver.address]);
          if (result && result !== {}) return result[receiver.address].base.stable;
       } catch (error) {
-         myUtil.error('Byteball getBalance error', error);
+         myUtil.error(`${this.dagType} getBalance error: ${error}`);
          return null;
       }
    }
@@ -89,8 +95,28 @@ class Byteball extends DAGInterface {
          const result = await getBalancesAsync([receiver.address]);
          if (result && result !== {}) return result[receiver.address].base.stable + result[receiver.address].base.pending;
       } catch (error) {
-         myUtil.error('Byteball getTransaction error', error);
+         myUtil.error(`${this.dagType} getTransaction error: ${error}`);
          return null;
+      }
+   }
+
+   async getHistory(query_url, senders,receiver) {
+      let send = 0;
+      let receive = 0;
+      try {
+         const client = new byteball.Client(query_url);
+         const getWitnessesAsync = util.promisify(client.api.getWitnesses);
+         const witnesses = await getWitnessesAsync();
+         const params = {
+            witnesses,
+            addresses: [receiver.address]
+         };
+         const getHistoryAsync = util.promisify(client.api.getHistory);
+         const history = await getHistoryAsync(params);
+         return;
+      } catch (error) {
+         myUtil.error(`${this.dagType} getHistory error: ${error}`);
+         return;
       }
    }
 
@@ -142,11 +168,7 @@ class Byteball extends DAGInterface {
       return { query_url, query_times };
    }
 
-   async calTransactions(data) {
-      return data;
-   }
-
-   async calBalance(data) {
+   async calBalance(data, receiver) {
       return data;
    }
 
@@ -162,7 +184,7 @@ class Byteball extends DAGInterface {
             const attached = result.joint.unit.timestamp;
             const send = result.joint.unit.messages[1].payload.time / 1000;
             const time = attached - parseInt(send);
-            latency.push(time);
+            latency.push(time ? time : 1);
          } catch (error) {
             myUtil.error('Byteball calLatency error', error);
             continue;
@@ -171,8 +193,35 @@ class Byteball extends DAGInterface {
       return latency;
    }
 
-   async calTimes(data) {
-      return data;
+   async throughtputHeader() {
+      const header = [
+         { id: 'nodes', title: 'NODE' },
+         { id: 'client', title: 'CLIENT' },
+         { id: 'rate', title: 'RATE' },
+         { id: 'duration', title: 'DURATION' },
+         { id: 'tps', title: 'TPS' },
+         { id: 'ctps', title: 'CTPS' }
+      ]
+      return header;
+   }
+
+   async throughtputRecords(transactions, balance, times, nodes, senders, duration) {
+      const rate = times / duration;
+      const confirmed = balance[balance.length - 1] - balance[0];
+      const valid_trans = transactions[transactions.length - 1] - transactions[0];
+      const valid_duration = 0.9 * duration;
+      const tps = (valid_trans / valid_duration).toFixed(4);
+      const ctps = (confirmed / valid_duration).toFixed(4);
+
+      const records = [{
+         nodes,
+         client: senders,
+         rate,
+         duration: valid_duration,
+         tps,
+         ctps
+      }]
+      return records;
    }
 
    async finalise() {

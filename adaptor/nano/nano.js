@@ -34,16 +34,6 @@ class Nano extends DAGInterface {
       } else { }
    }
 
-   // async prepareClients() {
-   //    const config = require(this.configPath);
-   //    const key = config.key;
-   //    // const clients = config.client_num
-   //    // make clients a class
-   //    const clients = this.getClients(config);
-   //    // console.log('Iota prepareClients', config.client_num);
-   //    return clients;
-   // }
-
    async send(node, sender, send_times, receiver) {
       const senderClient = client({ rai_node_host: node.rpc });
       senderClient.send({ wallet: sender.wallet, source: sender.account, destination: receiver.account, amount: 1 })
@@ -99,7 +89,7 @@ class Nano extends DAGInterface {
       }
    }
 
-   async getHistory(query_url, account) {
+   async getHistory(query_url, senders, account) {
       let input = 0;
       let output = 0;
 
@@ -110,13 +100,12 @@ class Nano extends DAGInterface {
       });
       try {
          const queryClient = client({ rai_node_host: query_url.rpc });
-         const result = await queryClient.account_history({ account: account.account, count: 1 });
-         // TODO: history return error
-         // console.log('his', result)
-         // result.history.map((block) => {
-         //    if (block.type === 'send') input++
-         //    else output++
-         // });
+         const result = await queryClient.account_history({ account: senders[0].account, count: 1 });
+
+         result.history.map((block) => {
+            if (block.type === 'send') input++
+            else output++
+         });
          return;
       } catch (error) {
          myUtil.error(`Nano getHistory error: ${error}`);
@@ -134,7 +123,6 @@ class Nano extends DAGInterface {
       try {
          const queryClient = client({ rai_node_host: query_url.rpc });
          const result = await queryClient.account_balance({ account: account.account });
-
          return Number(result.pending);
       } catch (error) {
          myUtil.error(`Nano getTransaction error: ${error}`);
@@ -185,12 +173,9 @@ class Nano extends DAGInterface {
 
          await sendClient.receive({ wallet: senderWallet.wallet, account: senderAccount.account, block: blockObj.block });
 
-         const bal = await sendClient.account_balance({ account: senderAccount.account })
-         console.log('bal',bal)
          senders.push({ ip: this.nodes[i], wallet: senderWallet.wallet, account: senderAccount.account });
       }
 
-      console.log('send', senders)
       this.senders = senders;
       return senders;
    }
@@ -213,7 +198,7 @@ class Nano extends DAGInterface {
    }
 
    generateQuery() {
-      const query_url = `http://${this.config.query_ip}:${this.config.query_port}`;
+      const query_url = { rpc: `http://${this.config.query_ip}:${this.config.query_port}`, peer: `` };
       const query_times = Number(this.config.query_times);
       return { query_url, query_times };
    }
@@ -227,13 +212,20 @@ class Nano extends DAGInterface {
       await client2.bootstrap({ address: peer1.peer, port: 7075 });
    }
 
-   async calTransactions(data) {
-      return data;
-   }
+   async calBalance(data, receiver) {
+      const receiverClient = client({ rai_node_host: receiver.ip.rpc });
+      const pendingBlocks = await receiverClient.pending({ account: receiver.account, count: -1 });
+      const start = new Date();
+      if (pendingBlocks.blocks.length) {
+         for (let i = 0; i < pendingBlocks.blocks.length; i++) {
+            await receiverClient.receive({ wallet: receiver.wallet, account: receiver.account, block: pendingBlocks.blocks[i] });
+         }
+         const end = new Date();
+         const lag = end.getTime() - start.getTime();
 
-   async calBalance(data) {
-      // receive
-      return data;
+         return { receiveRate: lag / pendingBlocks.blocks.length / 1000 };
+      }
+      else return { receiveRate: 0 };
    }
 
    async calLatency(data) {
@@ -269,8 +261,33 @@ class Nano extends DAGInterface {
       })
    }
 
-   async calTimes(data) {
-      return data;
+   async throughtputHeader() {
+      const header = [
+         { id: 'nodes', title: 'NODE' },
+         { id: 'client', title: 'CLIENT' },
+         { id: 'rate', title: 'RATE' },
+         { id: 'duration', title: 'DURATION' },
+         { id: 'tps', title: 'TPS' },
+         { id: 'receiveRate', title: 'RECEIVERATE' }
+      ]
+      return header;
+   }
+
+   async throughtputRecords(transactions, balance, times, nodes, senders, duration) {
+      const rate = times / duration;
+      const valid_trans = transactions[transactions.length - 1] - transactions[0];
+      const valid_duration = 0.9 * duration;
+      const tps = (valid_trans / valid_duration).toFixed(4);
+
+      const records = [{
+         nodes,
+         client: senders,
+         rate,
+         duration: valid_duration,
+         tps,
+         receiveRate: balance.receiveRate
+      }]
+      return records;
    }
 
    async finalise() {

@@ -42,11 +42,6 @@ class DAG {
       await this.dagObj.init(env);
    }
 
-   // async prepareClients(work) {
-   //    Util.log(`### ${this.dagType} prepareClients for ${work} ###`);
-   //    return await this.dagObj.prepareClients(work);
-   // }
-
    async send(nodes_address, sender_account, send_times, receiver_account) {
       await this.dagObj.send(nodes_address, sender_account, send_times, receiver_account);
    }
@@ -74,20 +69,20 @@ class DAG {
       return await this.dagObj.getTransaction(query_url, account);
    }
 
-   async getHistory(query_url, account) {
-      return await this.dagObj.getHistory(query_url, account);
+   async getHistory(query_url, senders, account) {
+      return await this.dagObj.getHistory(query_url, senders, account);
    }
 
    async generateNodes() {
       return await this.dagObj.generateNodes();
    }
 
-   async generateSenderGroup(senders) {
-      return await this.dagObj.generateSenderGroup(senders);
-   }
-
    async generateSenders() {
       return await this.dagObj.generateSenders();
+   }
+
+   async generateSenderGroup(senders) {
+      return await this.dagObj.generateSenderGroup(senders);
    }
 
    async generateOne() {
@@ -102,25 +97,22 @@ class DAG {
       return await this.dagObj.generateQuery();
    }
 
-   async generateOutput() {
-      return await this.dagObj.generateOutput();
-   }
-
-   async calTransactions(data) {
-      return await this.dagObj.calTransactions(data);
-   }
-
-   async calBalance(data) {
-      return await this.dagObj.calBalance(data);
+   async calBalance(data, receiver) {
+      return await this.dagObj.calBalance(data, receiver);
    }
 
    async calLatency(data) {
       return await this.dagObj.calLatency(data);
    }
 
-   async calTimes(data) {
-      return await this.dagObj.calTimes(data);
+   async throughtputHeader() {
+      return await this.dagObj.throughtputHeader();
    }
+
+   async throughtputRecords(transactions, balance, times, nodes, senders, duration) {
+      return await this.dagObj.throughtputRecords(transactions, balance, times, nodes, senders, duration);
+   }
+
 
    async finalise() {
       Util.log(`### ${this.dagType} finalise ###`);

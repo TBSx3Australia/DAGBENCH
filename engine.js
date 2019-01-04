@@ -8,7 +8,7 @@ const Workload = require('./workload/workload.js');
 
 const argv = require('minimist')(process.argv.slice(2));
 const net = argv.net || 'byteball';
-const work = argv.work || 'valuetransfer';
+const work = argv.work || 'query';
 const env = argv.env || 'local';
 
 const dagBenchDir = path.join(__dirname, '.');

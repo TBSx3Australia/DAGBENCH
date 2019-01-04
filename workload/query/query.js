@@ -37,19 +37,14 @@ class Query extends WorkloadInterface {
          await this.dag.sendAsync(this.clientArgs.nodes[0], this.clientArgs.senders, i, this.clientArgs.receiver);
       }
 
-      // for (let i = 0; i < transferIn; i++) {
-      //    await this.dag.sendAsync(this.clientArgs.nodes, this.clientArgs.senders[0][i], this.clientArgs.receiver);
-      // }
-
-      // // receiver transfer to receiver_another  
-      // await this.dag.sendAndWait(this.clientArgs.nodes, this.clientArgs.seed, this.clientArgs.receiver_another);
-
       return;
    }
 
    async createClients() {
+      await Util.sleep(4000);
+      
       const start_Q1 = new Date();
-      await this.dag.getHistory(this.clientArgs.nodes[0], this.clientArgs.receiver);
+      await this.dag.getHistory(this.clientArgs.nodes[0], this.clientArgs.senders, this.clientArgs.receiver);
       const lag_Q1 = new Date().getTime() - start_Q1.getTime();
 
       const start_Q2 = new Date();

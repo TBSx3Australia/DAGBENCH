@@ -1,7 +1,6 @@
-         Integrate network initiation   Valuetransfer   Query              CTPS
-IOTA              Y                       Y              Y                 Y
-Nano              Y                       Y              Y(Q1 error)       N
-Byteball          
 
-
-test with more nodes num
+| Implementation Matrix | Local Network Initiation | Valuetransfer | Query1 | Query2 | Local Resource Monitor |
+| ------------- |:-------------:| :-----:|:-----:|:-----:|:-----:|
+| IOTA      | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Nano      | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Byteball  | ❌ | ✅ | ✅ | ✅ | ❌ |

@@ -14,10 +14,6 @@ class DAGInterface {
       throw new Error('init is not implemented');
    }
 
-   // async prepareClients() { 
-   //    throw new Error('prepareClients is not implemented');
-   // }
-
    async send() { 
       throw new Error('send is not implemented');
    }
@@ -26,9 +22,8 @@ class DAGInterface {
       throw new Error('sendAsync is not implemented');
    }
 
-
    async sendAndWait() {
-      // not required
+      throw new Error('sendAndWait is not implemented');
    }
 
    async getBalance() {
@@ -67,14 +62,6 @@ class DAGInterface {
       throw new Error('generateQuery is not implemented');
    }
 
-   async generateOutput() {
-      throw new Error('generateOutput is not implemented');
-   }
-
-   async calTransactions() {
-      throw new Error('calTransactions is not implemented');
-   }
-
    async calBalance() {
       throw new Error('calBalance is not implemented');
    }
@@ -83,8 +70,12 @@ class DAGInterface {
       throw new Error('calLatency is not implemented');
    }
 
-   async calTimes() {
-      throw new Error('calTimes is not implemented');
+   async throughtputHeader() {
+      throw new Error('throughtputHeader is not implemented');
+   }
+
+   async throughtputRecords() {
+      throw new Error('throughtputRecords is not implemented');
    }
 
    async finalise() {

@@ -127,7 +127,7 @@ class Iota extends DAGInterface {
       }
    }
 
-   async getHistory(query_url, receiver) {
+   async getHistory(query_url, senders,receiver) {
       let send = 0;
       let receive = 0;
       try {
@@ -226,11 +226,7 @@ class Iota extends DAGInterface {
       return { query_url, query_times};
    }
 
-   async calTransactions(data) {
-      return data;
-   }
-
-   async calBalance(data) {
+   async calBalance(data, receiver) {
       return data;
    }
 
@@ -238,8 +234,35 @@ class Iota extends DAGInterface {
       return data;
    }
 
-   async calTimes(data) {
-      return data;
+   async throughtputHeader() {
+      const header = [
+         { id: 'nodes', title: 'NODE' },
+         { id: 'client', title: 'CLIENT' },
+         { id: 'rate', title: 'RATE' },
+         { id: 'duration', title: 'DURATION' },
+         { id: 'tps', title: 'TPS' },
+         { id: 'ctps', title: 'CTPS' }
+      ]
+      return header;
+   }
+
+   async throughtputRecords(transactions, balance, times, nodes, senders, duration) {
+      const rate = times / duration;
+      const confirmed = balance[balance.length - 1] - balance[0];
+      const valid_trans = transactions[transactions.length - 1] - transactions[0];
+      const valid_duration = 0.9 * duration;
+      const tps = (valid_trans / valid_duration).toFixed(4);
+      const ctps = (confirmed / valid_duration).toFixed(4);
+
+      const records = [{
+         nodes,
+         client: senders,
+         rate,
+         duration: valid_duration,
+         tps,
+         ctps
+      }]
+      return records;
    }
 
    async finalise() {
