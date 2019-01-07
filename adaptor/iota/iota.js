@@ -13,10 +13,7 @@ const DAGInterface = require('../DAG-Interface.js');
 const myUtil = require('../../util/util.js');
 
 class Iota extends DAGInterface { 
-   /**
-     * Create a new instance of the {Iota} class.
-     * @param {string} config_path The path of the Iota network configuration file.
-     */
+
    constructor(config_path) {
       super(config_path);
       const config = require(this.configPath);
@@ -43,7 +40,7 @@ class Iota extends DAGInterface {
 
          if (this.config.coo_interval) {
             myUtil.log(`### Iota running Coordinator periodically every ${this.config.coo_interval}s ###`);
-            // TODO: auto terminate this exec
+
             exec(`java -jar ${cooPath} PeriodicCoordinator -host ${this.config.query_ip} -port ${this.config.query_port} -interval ${this.config.coo_interval}`);
          }
          
@@ -54,20 +51,6 @@ class Iota extends DAGInterface {
       }
       
    }
-
-   // async prepareClients(work) {
-
-   //    // may differ
-   //    const nodes = await this.generateNodes();
-   //    const senders = await this.generateSenders();
-   //    const senders_one = await this.generateOne();
-   //    const receiver = this.config.receiver;
-   //    const query = await this.generateQuery();
-
-   //    const clientArg = new ClientArg(this.config, nodes, senders, senders_one, receiver, query);
-
-   //    return clientArg.getClientArg();
-   // }
 
    async send(node, sender, send_times, receiver) {
       let send = sender;
@@ -176,7 +159,6 @@ class Iota extends DAGInterface {
          message: conventer.asciiToTrytes(JSON.stringify(this.config.payload))
       }];
 
-      // TODO: generate seeds before
       const seedsText = fs.readFileSync(`./network/iota/data/seed.txt`, "utf-8");
       const seedsArr = seedsText.split("\n");
 
@@ -206,10 +188,13 @@ class Iota extends DAGInterface {
    }
 
    generateOne() {
-      // TODO: generate seeds
       const seed_one_st = fs.readFileSync(`./network/iota/data/seed_one.txt`, "utf-8");
       const senders_one = seed_one_st.split("\n");
       return senders_one;
+   }
+
+   generateSeed() {
+      // implement with iota-coo.jar
    }
 
    generateReceiver() {

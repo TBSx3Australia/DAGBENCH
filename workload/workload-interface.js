@@ -19,8 +19,8 @@ class WorkloadInterface {
       throw new Error('preloadData is not implemented');
    }
 
-   async createClients() {
-      throw new Error('createClients is not implemented');
+   async createTest() {
+      throw new Error('createTest is not implemented');
    }
 
    async calculate() { 

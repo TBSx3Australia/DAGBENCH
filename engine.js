@@ -7,8 +7,8 @@ const DAG = require('./adaptor/DAG.js');
 const Workload = require('./workload/workload.js');
 
 const argv = require('minimist')(process.argv.slice(2));
-const net = argv.net || 'byteball';
-const work = argv.work || 'query';
+const net = argv.net || 'nano';
+const work = argv.work || 'valuetransfer';
 const env = argv.env || 'local';
 
 const dagBenchDir = path.join(__dirname, '.');
@@ -26,7 +26,7 @@ async function run() {
       const workload = new Workload(configPath, dag);
       await workload.prepareClients();
       await workload.preloadData();
-      await workload.createClients();
+      await workload.createTest();
       await workload.calculate();
       await workload.generateReport(net);
 

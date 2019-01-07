@@ -32,26 +32,41 @@ class Workload {
       }
    }
 
+   /**
+    * prepare configuration data for clients
+    */
    async prepareClients() {
       Util.log(`### ${this.workType} prepareClients ###`);
       await this.workObj.prepareClients();
    }
 
+   /**
+    * preload required data for running the workload
+    */
    async preloadData() {
       Util.log(`### ${this.workType} preload data ###`);
       await this.workObj.preloadData();
    }
 
-   async createClients() {
-      Util.log(`### ${this.workType} createClients ###`);
-      return this.workObj.createClients();
+   /**
+    * create the test
+    */
+   async createTest() {
+      Util.log(`### ${this.workType} createTest ###`);
+      return this.workObj.createTest();
    }
 
+   /**
+    * calculate the result
+    */
    async calculate() {
       Util.log(`### ${this.workType} calculate ###`);
       return this.workObj.calculate();
    }
 
+   /**
+    * generate the report
+    */
    async generateReport(net) {
       Util.log(`### ${this.workType} generateReport ###`);
       return this.workObj.generateReport(net);

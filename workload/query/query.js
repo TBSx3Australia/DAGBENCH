@@ -40,7 +40,7 @@ class Query extends WorkloadInterface {
       return;
    }
 
-   async createClients() {
+   async createTest() {
       await Util.sleep(4000);
       
       const start_Q1 = new Date();

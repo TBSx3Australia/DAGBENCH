@@ -10,10 +10,7 @@ const exec = util.promisify(require('child_process').exec);
 const DAGInterface = require('../DAG-Interface.js');
 const myUtil = require('../../util/util.js');
 class Nano extends DAGInterface {
-   /**
-     * Create a new instance of the {Iota} class.
-     * @param {string} config_path The path of the Iota network configuration file.
-     */
+
    constructor(config_path) {
       super(config_path);
       const config = require(this.configPath);

@@ -38,7 +38,7 @@ class ValueTransfer extends WorkloadInterface {
       return;
    }
 
-   async createClients() {
+   async createTest() {
       return new Promise((resolve, reject) => {
          const client_num = this.clientArgs.sender_num + 2;
          const clientDir = path.join(__dirname, '.');
@@ -94,34 +94,11 @@ class ValueTransfer extends WorkloadInterface {
    }
 
    async generateThroughput(net, transactions, balance, times, nodes, senders, duration) {
-
-      // const rate = times / duration;
-      // const confirmed = balance[balance.length - 1] - balance[0];
-      // const valid_trans = transactions[transactions.length - 1] - transactions[0];
-      // const valid_duration = 0.9 * duration;
-      // const tps = (valid_trans / valid_duration).toFixed(4);
-      // const ctps = (confirmed / valid_duration).toFixed(4);
       
       const timestamp = new Date().toString().substring(4, 24);
       const path = `./workload/valuetransfer/report/${net}-throughput-${timestamp}.csv`;
       const header = await this.dag.throughtputHeader();
       const records = await this.dag.throughtputRecords(transactions, balance, times, nodes, senders, duration);
-      // const header = [
-      //    { id: 'nodes', title: 'NODE' },
-      //    { id: 'client', title: 'CLIENT' },
-      //    { id: 'rate', title: 'RATE' },
-      //    { id: 'duration', title: 'DURATION' },
-      //    { id: 'tps', title: 'TPS' },
-      //    { id: 'ctps', title: 'CTPS' }
-      // ]
-      // const records = [{
-      //    nodes,
-      //    client: senders,
-      //    rate,
-      //    duration: valid_duration,
-      //    tps,
-      //    ctps
-      // }]
 
       await Util.csvWriter(header, records, path);
    }

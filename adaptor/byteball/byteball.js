@@ -9,10 +9,7 @@ const wifLib = require('wif');
 const DAGInterface = require('../DAG-Interface.js');
 const myUtil = require('../../util/util.js');
 class Byteball extends DAGInterface {
-   /**
-     * Create a new instance of the {Iota} class.
-     * @param {string} config_path The path of the Iota network configuration file.
-     */
+
    constructor(config_path) {
       super(config_path);
       const config = require(this.configPath);
@@ -21,7 +18,7 @@ class Byteball extends DAGInterface {
    }
 
    async init() {
-      console.log('Byteball init');
+      myUtil.log('Byteball init')
    }
 
    async send(node, sender, send_times, receiver) {
