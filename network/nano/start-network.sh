@@ -7,12 +7,17 @@ function generateConfig(){
       OPTS="-i"
    fi
 
+   # echo build git repository
+   # git clone --recursive https://github.com/nanocurrency/raiblocks.git
+
+   # echo build docker image
+   # ./docker/node/build.sh -n test
+
    # echo install jq
    # brew install jq
 
    echo clean up old data
    rm -rf ./network/nano/peer*
-   # rm -rf ./peer*
 
    COUNTER=0
    while [ $COUNTER -lt $NUMBER_OF_NODES ]; do

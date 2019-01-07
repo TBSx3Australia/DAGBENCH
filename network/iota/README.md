@@ -103,9 +103,9 @@ Before starting the test net, you need to install docker and pull iota docker im
 Since each node locates on an independent AWS instance, the ip address of all other neighbours should be passed as a parameter when creating the network. This leads to the difference of the start network script:
 
 
-1. run start-single-node.sh on each AWS instance
+1. run `iota-aws-node.sh` under aws repository on each AWS instance
 ```
-./start-single-node.sh -m ip1 -m ip2 -n 8 -s 0
+./iota-aws-node.sh -m ip1 -m ip2 -n 8 -s 0
 ```
 * -m: list of instances ip, you can generate this option with 'aws_option.js'
 * -n: number of neighbors

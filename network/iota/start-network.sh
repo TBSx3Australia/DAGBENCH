@@ -8,6 +8,12 @@ function generateConfig() {
       OPTS="-i"
     fi
 
+    # echo pull docker image
+    # docker pull iotaledger/iri:v1.4.2.4
+
+    # echo install java 8 and Maven
+    # user should install java 8 and Maven
+
     echo clean up old data
     rm -rf ./network/iota/config_*
 

@@ -22,13 +22,9 @@ When building local environment for Nano, we first pull the Nano git repository 
    ./docker/node/build.sh -n test
    ```
 
-3. docker run multiple nodes, need to configurate port:
+3. run multiple nodes with `start-network.sh`
    ```
-   docker run --name nano1 -p 7001:7075/udp -p 7001:7075 -p 127.0.0.1:7011:7011 -v $(pwd):/root/RaiBlocksTest raiblocks-node-test
-
-   docker run --name nano2 -p 7002:7075/udp -p 7002:7075 -p 127.0.0.1:7012:7012 -v $(pwd):/root/RaiBlocksTest raiblocks-node-test
-
-   docker run --name nano3 -p 7003:7075/udp -p 7003:7075 -p 127.0.0.1:7013:7013 -v $(pwd):/root/RaiBlocksTest raiblocks-node-test
+   ./start-network.sh -n 2
    ```
 
 4. edit config.json
@@ -92,9 +88,9 @@ Before starting the test net, you need to install docker and build docker image 
 
 Since each node locates on an independent AWS instance, the ip address of all other neighbours should be passed as a parameter when creating the network. This leads to the difference of the start network script:
 
-1. run start-single-nano on each AWS instance
+1. run `nano-aws-node.sh` under aws repository on each AWS instance
 ```
-./start-single-node.sh -m ip1 -m ip2 -n 8 -s 0
+./nano-aws-node.sh -m ip1 -m ip2 -n 8 -s 0
 ```
 * -m: list of instances ip, you can generate this option with 'aws_option.js'
 * -n: number of neighbors
