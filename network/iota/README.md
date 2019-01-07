@@ -110,8 +110,3 @@ Since each node locates on an independent AWS instance, the ip address of all ot
 * -m: list of instances ip, you can generate this option with 'aws_option.js'
 * -n: number of neighbors
 * -s: sequence of the instance among the whole nodes group
-
-After running the above script, you have built the test net on either your local machine or your AWS platform. Then you can start to test on the workloads: 
-1. valuetransfer https://gitlab.com/tbsx3_sydney/dag-benchmark/tree/master/workloads/valuetransfer#iota-adapter
-2. query https://gitlab.com/tbsx3_sydney/dag-benchmark/tree/master/workloads/query#iota-adapter
-
