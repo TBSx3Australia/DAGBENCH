@@ -37,8 +37,8 @@ Some prerequsites for running a DAG network should be installed and configured b
 2. Create configuration files (json) for each DAG network under `network`.
 
 ## Architecture
-<!-- TODO: DAGBENCH Engine -->
-<img src="./img/Architecture.png" alt="DAGBENCH Achitecture" width="350"/>
+
+<img src="./img/Architecture.png" alt="DAGBENCH Achitecture" width="400"/>
 
 Figure above illustrates the current DAGBENCH's implementation. To make all the workloads and DAG networks extensible, DAGBENCH is designed with a DAGBENCH engine, a DAG layer, an adaptation layer and a workload layer.
 
@@ -48,7 +48,7 @@ Figure above illustrates the current DAGBENCH's implementation. To make all the 
 * DAG Layer: DAG network is established in DAG layer. The configuration files for different workloads should be defined in this layer.
 
 ### DAGBENCH engine
-<img src="./img/Engine.png" alt="DAGBENCH Engine" width="300"/>
+<img src="./img/Engine.png" alt="DAGBENCH Engine" width="350"/>
 
 The DAGBENCH engine is an entrance for the evaluation tool. The engine will accept three arguments: `net`, `work` and `env`. These arguments will indicate the network, workload and environment for this test. Then a `DAG` instance will be initialised and a `workload` instance will create the test.
 
