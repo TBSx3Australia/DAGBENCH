@@ -1,6 +1,8 @@
 'use strict';
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
 class Util {
 
@@ -47,7 +49,7 @@ class Util {
     * @param {array} records records array align with 'header'
     * @param {string} path path that output the csv file
     */
-   static async csvWriter(header, records, path) { 
+   static async csvWriter(header, records, path) {
       const csvWriter = createCsvWriter({
          path,
          header
@@ -55,6 +57,15 @@ class Util {
 
       await csvWriter.writeRecords(records);
       this.log(`${path} write success`);
+   }
+
+   /**
+    * make a directory
+    * @param {string} path the path of the directory
+    */
+   static async mkDir(path) {
+      await exec(`mkdir ${path}`);
+      return;
    }
 }
 

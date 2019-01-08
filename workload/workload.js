@@ -69,6 +69,7 @@ class Workload {
     */
    async generateReport(net) {
       Util.log(`### ${this.workType} generateReport ###`);
+      await Util.mkDir(`./workload/${this.workType}/report`);
       return this.workObj.generateReport(net);
    }
 

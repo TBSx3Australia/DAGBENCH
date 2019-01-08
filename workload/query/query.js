@@ -25,7 +25,6 @@ class Query extends WorkloadInterface {
       }
 
       this.clientArgs = clientArgs;
-      console.log('prepare clientArgs', this.clientArgs)
       return;
    }
 

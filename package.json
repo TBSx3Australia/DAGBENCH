@@ -25,6 +25,7 @@
     "byteballcore": "^0.2.93",
     "csv-writer": "^1.2.0",
     "headless-byteball": "^0.1.0",
+    "minimist": "^1.2.0",
     "raiblocks-client": "^1.0.0",
     "wif": "^2.0.6"
   }

@@ -7,11 +7,8 @@ function generateConfig(){
       OPTS="-i"
    fi
 
-   # echo build git repository
-   # git clone --recursive https://github.com/nanocurrency/raiblocks.git
-
-   # echo build docker image
-   # ./docker/node/build.sh -n test
+   # echo pull docker image
+   # docker pull registry.gitlab.com/tbsx3_sydney/dagbench:latest
 
    # echo install jq
    # brew install jq

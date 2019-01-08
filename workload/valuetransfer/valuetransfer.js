@@ -29,7 +29,6 @@ class ValueTransfer extends WorkloadInterface {
       const clientArg = new ClientArg(this.config, nodes, sender_group, senders_one, receiver, query);
 
       this.clientArgs = clientArg.getClientArg();
-      console.log('client', this.clientArgs.senders, this.clientArgs.receiver);
 
       return;
    }
