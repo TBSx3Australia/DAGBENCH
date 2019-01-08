@@ -5,10 +5,10 @@ This document will describe the detailed steps on how to setup the test net of I
 If you are not familar with the concept and components of IOTA, please see: https://domschiener.gitbooks.io/iota-guide/content/ and https://gitlab.com/tbsx3_sydney/documents/blob/master/project/DAG-research/IOTA.md
 
 ## Prerequsite
-Docker
-Java 8
-Maven
-AWS
+* Docker
+* Java 8
+* Maven
+* AWS
 
 ## Local ENV
 

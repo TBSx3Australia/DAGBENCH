@@ -86,6 +86,7 @@ We conducted an evaluation of the three DAG solutions with the DAGBENCH, we iden
    $ npm install
    ```
 
+5. start performance test
    ```bash
    $ node engine.js --net (iota|nano|byteball) --work (valuetransfer|query) --env local
    ```

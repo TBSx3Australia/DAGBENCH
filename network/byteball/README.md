@@ -12,43 +12,43 @@ The testnet we built is based on:
 4. https://byteballjs.com/
 
 ## Prerequsite
-Node v8.9.4
-nvm
-pm2
-AWS
+* Node v8.9.4
+* nvm
+* pm2
+* AWS
 
 ## Local ENV
 1. Install NodeJS and Tools
 
-Install NodeJS version control tool NVM:
+   Install NodeJS version control tool NVM:
 
-```bash
-$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
-```
+   ```bash
+   $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+   ```
 
-Check if NVM is installed successfully:
+   Check if NVM is installed successfully:
 
-```bash
-$ nvm -v
-```
+   ```bash
+   $ nvm -v
+   ```
 
-Install NodeJS v8.9.4 LTS:
+   Install NodeJS v8.9.4 LTS:
 
-```bash
-$ nvm install 8.9.4
-```
+   ```bash
+   $ nvm install 8.9.4
+   ```
 
-Install NodeJS process management tool:
+   Install NodeJS process management tool:
 
-```bash
-$ npm install pm2 -g
-```
+   ```bash
+   $ npm install pm2 -g
+   ```
 
-Install NodeJS code compile tool:
+   Install NodeJS code compile tool:
 
-```bash
-$ npm install node-gyp -g
-```
+   ```bash
+   $ npm install node-gyp -g
+   ```
 
 2. Download source codes
 

@@ -5,8 +5,8 @@ This document will describe the detailed steps on how to setup the test net of N
 If you are not familar with the concept and components of Nano, please see: https://developers.nano.org/guides/node-setup/
 
 ## Prerequsite
-Docker
-AWS
+* Docker
+* AWS
 
 ## Local ENV
 
