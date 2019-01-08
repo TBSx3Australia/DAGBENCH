@@ -51,8 +51,7 @@ class Operation {
 
    async query() {
       return new Promise((resolve, reject) => {
-         let balance = [];
-         let transactions = [];
+         let balance = [], transactions = [];
 
          const receiver = this.clientArgs.receiver;
          const query_url = this.clientArgs.query.query_url;
@@ -82,6 +81,6 @@ class Operation {
             }
          }, query_lag);
       })
-   }      
+   }
 }
 module.exports = Operation;

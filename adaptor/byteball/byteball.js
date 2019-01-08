@@ -97,9 +97,8 @@ class Byteball extends DAGInterface {
       }
    }
 
-   async getHistory(query_url, senders,receiver) {
-      let send = 0;
-      let receive = 0;
+   async getHistory(query_url, senders, receiver) {
+      let send = 0, receive = 0;
       try {
          const client = new byteball.Client(query_url);
          const getWitnessesAsync = util.promisify(client.api.getWitnesses);

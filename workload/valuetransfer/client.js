@@ -6,7 +6,7 @@ const Operation = require('./operation.js');
 
 process.on('message', async (m) => {
 
-   let result = {}
+   let result;
    const dag = new DAG(m.dagPath);
    const operation = new Operation(dag, m.arg);
 

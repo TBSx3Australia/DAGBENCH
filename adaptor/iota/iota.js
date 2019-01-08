@@ -12,7 +12,7 @@ const exec = util.promisify(require('child_process').exec);
 const DAGInterface = require('../DAG-Interface.js');
 const myUtil = require('../../util/util.js');
 
-class Iota extends DAGInterface { 
+class Iota extends DAGInterface {
 
    constructor(config_path) {
       super(config_path);
@@ -43,13 +43,13 @@ class Iota extends DAGInterface {
 
             exec(`java -jar ${cooPath} PeriodicCoordinator -host ${this.config.query_ip} -port ${this.config.query_port} -interval ${this.config.coo_interval}`);
          }
-         
+
          return;
-      } else { 
+      } else {
          // implement other env
          return;
       }
-      
+
    }
 
    async send(node, sender, send_times, receiver) {
@@ -110,9 +110,8 @@ class Iota extends DAGInterface {
       }
    }
 
-   async getHistory(query_url, senders,receiver) {
-      let send = 0;
-      let receive = 0;
+   async getHistory(query_url, senders, receiver) {
+      let send = 0, receive = 0;
       try {
          const iota = core.composeAPI({ provider: query_url });
          const data = await iota.getAccountData(receiver.seed);
@@ -208,7 +207,7 @@ class Iota extends DAGInterface {
    generateQuery() {
       const query_url = `http://${this.config.query_ip}:${this.config.query_port}`;
       const query_times = Number(this.config.query_times);
-      return { query_url, query_times};
+      return { query_url, query_times };
    }
 
    async calBalance(data, receiver) {

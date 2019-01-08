@@ -1,8 +1,5 @@
 'use strict';
 
-const path = require('path');
-const childProcess = require('child_process');
-
 const WorkloadInterface = require('../workload-interface.js');
 const Util = require('../../util/util.js');
 
@@ -41,7 +38,7 @@ class Query extends WorkloadInterface {
 
    async createTest() {
       await Util.sleep(4000);
-      
+
       const start_Q1 = new Date();
       await this.dag.getHistory(this.clientArgs.nodes[0], this.clientArgs.senders, this.clientArgs.receiver);
       const lag_Q1 = new Date().getTime() - start_Q1.getTime();
@@ -49,7 +46,7 @@ class Query extends WorkloadInterface {
       const start_Q2 = new Date();
       await this.dag.getBalance(this.clientArgs.nodes[0], this.clientArgs.receiver);
       const lag_Q2 = new Date().getTime() - start_Q2.getTime();
-      
+
       this.lags = {
          'q1': lag_Q1,
          "q2": lag_Q2

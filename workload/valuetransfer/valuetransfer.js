@@ -24,7 +24,7 @@ class ValueTransfer extends WorkloadInterface {
       const senders_one = await this.dag.generateOne();
       const receiver = await this.dag.generateReceiver();
       const query = await this.dag.generateQuery();
-      
+
 
       const clientArg = new ClientArg(this.config, nodes, sender_group, senders_one, receiver, query);
 
@@ -43,12 +43,9 @@ class ValueTransfer extends WorkloadInterface {
          const clientDir = path.join(__dirname, '.');
          const clientPath = path.join(clientDir, `/client.js`);
 
-         let balance = [];
-         let transactions = [];
-         let latency = [];
-         let times = 0;
+         let balance = [], transactions = [], latency = [];
+         let times = 0, num = 0;
 
-         let num = 0;
          for (let i = 0; i < client_num; i++) {
             const client = childProcess.fork(clientPath);
 
@@ -70,7 +67,7 @@ class ValueTransfer extends WorkloadInterface {
             });
 
          }
-         
+
       })
    }
 
@@ -87,13 +84,13 @@ class ValueTransfer extends WorkloadInterface {
 
    async generateReport(net) {
 
-      await this.generateThroughput(net,this.stats.transactions, this.stats.balance, this.stats.times, this.clientArgs.nodes.length, this.clientArgs.sender_num, this.clientArgs.duration);
+      await this.generateThroughput(net, this.stats.transactions, this.stats.balance, this.stats.times, this.clientArgs.nodes.length, this.clientArgs.sender_num, this.clientArgs.duration);
 
       await this.generateLatency(net, this.stats.latency, this.stats.times, this.clientArgs.nodes.length, this.clientArgs.sender_num, this.clientArgs.duration);
    }
 
    async generateThroughput(net, transactions, balance, times, nodes, senders, duration) {
-      
+
       const timestamp = new Date().toString().substring(4, 24);
       const path = `./workload/valuetransfer/report/${net}-throughput-${timestamp}.csv`;
       const header = await this.dag.throughtputHeader();
@@ -102,7 +99,7 @@ class ValueTransfer extends WorkloadInterface {
       await Util.csvWriter(header, records, path);
    }
 
-   async generateLatency(net, latency, times, nodes, senders, duration) { 
+   async generateLatency(net, latency, times, nodes, senders, duration) {
       const min = (Math.min(...latency)).toFixed(4);
       const max = (Math.max(...latency)).toFixed(4);
       const average = (latency.reduce((a, b) => a + b, 0) / latency.length).toFixed(4);
