@@ -29,7 +29,7 @@ function generateConfig(){
       BASE_NEIGHBOR_IP=172.17.0.
       jq -n --arg PORT ${PORT} --arg PEER1 $BASE_NEIGHBOR_IP''${PREVIOUS_NEIGHBOR_IP} --arg PEER2 $BASE_NEIGHBOR_IP''${NEXT_NEIGHBOR_IP} -f config_template.jq > config.json
 
-      docker run -d --name nano${COUNTER} -p 700${COUNTER}:7075/udp -p 700${COUNTER}:7075 -p 127.0.0.1:${PORT}:${PORT} -v $(pwd):/root/RaiBlocksTest raiblocks-node-test
+      docker run -d --name nano${COUNTER} -p 700${COUNTER}:7075/udp -p 700${COUNTER}:7075 -p 127.0.0.1:${PORT}:${PORT} -v $(pwd):/root/RaiBlocksTest registry.gitlab.com/tbsx3_sydney/dagbench
 
       cd ..
       let COUNTER=COUNTER+1
