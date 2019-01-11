@@ -36,7 +36,7 @@ We conducted an evaluation of the three DAG solutions with the DAGBENCH, we iden
 
    * Can only be accessed by TBSx3 GitLab, it can be pushed to a public docker hub when open source.
 
-   First log in to GitLab’s Container Registry using your GitLab username and password.:
+   First log in to GitLab’s Container Registry using your GitLab username and password.
    ```bash
    $ docker login registry.gitlab.com
    ```

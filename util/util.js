@@ -30,7 +30,6 @@ class Util {
     */
    static error(...msg) {
       // eslint-disable-next-line no-console
-      console.log('!!!!!');
       console.log(...msg);
    }
 
@@ -60,11 +59,11 @@ class Util {
    }
 
    /**
-    * make a directory
+    * make a directory if it doesn't exist
     * @param {string} path the path of the directory
     */
    static async mkDir(path) {
-      await exec(`mkdir ${path}`);
+      await exec(`[ -d ${path} ] || mkdir ${path}`);
       return;
    }
 }

@@ -18,7 +18,8 @@ class Byteball extends DAGInterface {
    }
 
    async init() {
-      myUtil.log('Byteball init')
+      // myUtil.log('Byteball init');
+      return;
    }
 
    async send(node, sender, send_times, receiver) {
@@ -119,8 +120,8 @@ class Byteball extends DAGInterface {
    generateNodes() {
       const nodes = [];
       const node_url = this.config.node_url;
-      for (let i = 0; i < node_url.length; i++) {
-         nodes.push(`ws://${node_url[i]}`);
+      for (let url of node_url) { 
+         nodes.push(`ws://${url}`);
       }
       return nodes;
    }
@@ -174,9 +175,9 @@ class Byteball extends DAGInterface {
 
       const client = new byteball.Client(nodes[0]);
       const getJointAsync = util.promisify(client.api.getJoint);
-      for (let i = 0; i < data.length; i++) {
+      for (let value of data) {
          try {
-            const result = await getJointAsync(data[i]);
+            const result = await getJointAsync(value);
             const attached = result.joint.unit.timestamp;
             const send = result.joint.unit.messages[1].payload.time / 1000;
             const time = attached - parseInt(send);
@@ -221,7 +222,8 @@ class Byteball extends DAGInterface {
    }
 
    async finalise() {
-      console.log('Byteball finalise');
+      // myUtil.log('Byteball finalise');
+      return;
    }
 
    // Byteball generate wallets

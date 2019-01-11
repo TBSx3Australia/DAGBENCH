@@ -190,7 +190,7 @@ class DAG {
     */
    async finalise() {
       Util.log(`### ${this.dagType} finalise ###`);
-      await this.dagObj.finalise();
+      return await this.dagObj.finalise();
    }
 }
 

@@ -140,8 +140,8 @@ class Iota extends DAGInterface {
    generateNodes() {
       const nodes = [];
       const node_url = this.config.node_url;
-      for (let i = 0; i < node_url.length; i++) {
-         nodes.push(`http://${node_url[i]}`);
+      for (let url of node_url) {
+         nodes.push(`http://${url}`);
       }
       return nodes;
    }
@@ -162,9 +162,8 @@ class Iota extends DAGInterface {
       const seedsArr = seedsText.split("\n");
 
       const wstream = fs.createWriteStream(`./network/iota/data/tryte.txt`);
-      // const trytes = [];
-      for (let i = 0; i < seedsArr.length; i++) {
-         const tryte = await iota.prepareTransfers(seedsArr[i], transfers);
+      for (let seed of seedsArr) {
+         const tryte = await iota.prepareTransfers(seed, transfers);
          senders.push(tryte);
          wstream.write(tryte + "\n");
       }
@@ -252,7 +251,6 @@ class Iota extends DAGInterface {
    async finalise() {
       await exec('docker stop $(docker ps -a -q)');
       await exec('docker rm $(docker ps -a -q)');
-      // await exec(`rm -rf ../network/${this.dagType}/config_*`);
 
       myUtil.log('### Iota finalise success ###');
       return;

@@ -130,10 +130,10 @@ class Nano extends DAGInterface {
    generateNodes() {
       const nodes = [];
       const node_url = this.config.node_url;
-      for (let i = 0; i < node_url.length; i++) {
+      for (let url of node_url) {
          nodes.push({
-            rpc: `http://${node_url[i].rpc}`,
-            peer: `::ffff:${node_url[i].peer}`
+            rpc: `http://${url.rpc}`,
+            peer: `::ffff:${url.peer}`
          });
       }
       this.nodes = nodes;
@@ -158,9 +158,9 @@ class Nano extends DAGInterface {
       })
 
       // create senders and transfer money from genesis to senders
-      for (let i = 0; i < this.nodes.length; i++) {
+      for (let node of this.nodes) {
          const genesisClient = client({ rai_node_host: this.genesis.ip.rpc });
-         const sendClient = client({ rai_node_host: this.nodes[i].rpc });
+         const sendClient = client({ rai_node_host: node.rpc });
          const senderWallet = await sendClient.wallet_create();
          const senderAccount = await sendClient.account_create({ wallet: senderWallet.wallet });
          
@@ -170,7 +170,7 @@ class Nano extends DAGInterface {
 
          await sendClient.receive({ wallet: senderWallet.wallet, account: senderAccount.account, block: blockObj.block });
 
-         senders.push({ ip: this.nodes[i], wallet: senderWallet.wallet, account: senderAccount.account });
+         senders.push({ ip: node, wallet: senderWallet.wallet, account: senderAccount.account });
       }
 
       this.senders = senders;
@@ -214,8 +214,8 @@ class Nano extends DAGInterface {
       const pendingBlocks = await receiverClient.pending({ account: receiver.account, count: -1 });
       const start = new Date();
       if (pendingBlocks.blocks.length) {
-         for (let i = 0; i < pendingBlocks.blocks.length; i++) {
-            await receiverClient.receive({ wallet: receiver.wallet, account: receiver.account, block: pendingBlocks.blocks[i] });
+         for (let block of pendingBlocks.blocks) {
+            await receiverClient.receive({ wallet: receiver.wallet, account: receiver.account, block });
          }
          const end = new Date();
          const lag = end.getTime() - start.getTime();
@@ -282,7 +282,7 @@ class Nano extends DAGInterface {
          rate,
          duration: valid_duration,
          tps,
-         receiveRate: balance.receiveRate
+         receiveRate: balance.receiveRate.toFixed(4)
       }]
       return records;
    }
