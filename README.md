@@ -13,6 +13,7 @@ Currently supported workloads:
 * Valuetransfer
 * Query
 
+TODO: make it to a pdf version
 We conducted an evaluation of the three DAG solutions with the DAGBENCH, we identified some observations in a report: https://www.overleaf.com/3277718854tfscgkrpfjtv
 
 ## Prerequsite
@@ -79,7 +80,7 @@ We conducted an evaluation of the three DAG solutions with the DAGBENCH, we iden
    ```bash
    $ npm install node-gyp -g
    ```
-   * Byteball network initiation is not integrated, if you want to test with Byteball network, please first build the network from here: https://gitlab.com/tbsx3_sydney/dagbench/tree/master/network/byteball. Then run DAGBENCH evaluation tool.
+   * Byteball network initiation is not integrated, if you want to test with Byteball network, please first build the network from: [Byteball network setup](./network/byteball/README.md). Then run DAGBENCH evaluation tool.
 
 4. install npm packages
    ```bash
@@ -151,6 +152,6 @@ IOTA, Nano and Byteball are supppoted now.
 
 In this layer, DAG network is set and configuration files are defined. The detailed instruction on environment setup for IOTA, Nano and Byteball are listed below:
 
-* IOTA setup: https://gitlab.com/tbsx3_sydney/dagbench/tree/master/network/iota
-* Byteball setup: https://gitlab.com/tbsx3_sydney/dagbench/tree/master/network/byteball
-* Nano setup: https://gitlab.com/tbsx3_sydney/dagbench/tree/master/network/nano
+* [IOTA setup](./network/iota/README.md)
+* [Byteball setup](./network/byteball/README.md)
+* [Nano setup](./network/nano/README.md)
