@@ -43,7 +43,7 @@ We conducted an evaluation of the three DAG solutions with the DAGBENCH, we iden
    ```
    pull docker image from the GitLab
    ```bash
-   $ docker pull registry.gitlab.com/tbsx3_sydney/dagbench:latest
+   $ docker pull tbsx3/raiblocks-node-test
    ```
    install jq:
    ```bash
