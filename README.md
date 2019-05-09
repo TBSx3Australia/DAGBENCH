@@ -13,8 +13,6 @@ Currently supported workloads:
 * Valuetransfer
 * Query
 
-TODO: make it to a pdf version
-We conducted an evaluation of the three DAG solutions with the DAGBENCH, we identified some observations in a report: https://www.overleaf.com/3277718854tfscgkrpfjtv
 
 ## Prerequsite
 * node V8.9.4
